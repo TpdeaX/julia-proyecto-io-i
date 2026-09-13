@@ -1,0 +1,121 @@
+# Resta la fila elegida
+function restar(fila_elegida, fila_paso, C)
+    return fila_paso .- C .* fila_elegida
+end
+
+# Coeficiente minimo
+function coeficiente_minimo(solucion, columna)
+    minima = Inf
+    posicion = -1
+    for i in 1:length(columna)
+        if columna[i] > 0
+            aux = solucion[i] / columna[i]
+            if aux < minima
+                minima = aux
+                posicion = i
+            end
+        end
+    end
+    return posicion
+end
+
+# Evaluar si en al funcion objetivo hay enteros positivos
+function evaluador(fila_objetivo)
+    maximo = 0.0
+    posicion = -1
+    for i in 1:length(fila_objetivo)
+        if fila_objetivo[i] > maximo
+            maximo = fila_objetivo[i]
+            posicion = i
+        end
+    end
+    return posicion
+end
+
+function armar_matriz()
+    println("Ingrese el número de restricciones (m):")
+    m = parse(Int, readline())
+    println("Ingrese el número de variables (n):")
+    n = parse(Int, readline())
+
+    tablero = zeros(m + 1, n + m + 1)
+
+    for i in 1:m
+        println("Ingrese la fila $i (los $n coeficientes y al final el valor de la solución, separados por espacios):")
+        valores = parse.(Float64, split(readline()))
+        if length(valores) != n + 1
+            error("Se esperaban $(n + 1) valores (n coeficientes + 1 solución), se recibieron $(length(valores))")
+        end
+        coeficientes = valores[1:n]
+        rhs = valores[end]
+        holgura = zeros(m)
+        holgura[i] = 1.0
+        tablero[i + 1, :] = vcat(coeficientes, holgura, [rhs])
+    end
+
+    println("Ingrese la función objetivo ($n coeficientes, separados por espacios):")
+    coeficientes_objetivo = parse.(Float64, split(readline()))
+    if length(coeficientes_objetivo) != n
+        error("Se esperaban $n valores (uno por variable), se recibieron $(length(coeficientes_objetivo))")
+    end
+    tablero[1, :] = vcat(coeficientes_objetivo, zeros(m), [0.0])
+
+    return tablero
+end
+
+function simplex()
+    tablero = armar_matriz()
+    m = size(tablero, 1) - 1
+    n = size(tablero, 2) - m - 1
+    #Agrego holguras
+    base = collect(n+1:n+m)  
+
+    while true
+        fila_objetivo = tablero[1, 1:end-1]
+        columna_pivote = evaluador(fila_objetivo)
+
+        if columna_pivote == -1
+            break 
+        end
+
+        solucion = tablero[2:end, end]
+        columna = tablero[2:end, columna_pivote]
+        fila_relativa = coeficiente_minimo(solucion, columna)
+
+        if fila_relativa == -1
+            error("El problema es no acotado (no hay fila válida para pivotear)")
+        end
+
+        fila_pivote = fila_relativa + 1  # fila 1 es la del objetivo
+        pivote = tablero[fila_pivote, columna_pivote]
+        tablero[fila_pivote, :] = tablero[fila_pivote, :] ./ pivote
+
+        for i in 1:size(tablero, 1)
+            if i != fila_pivote
+                C = tablero[i, columna_pivote]
+                tablero[i, :] = restar(tablero[fila_pivote, :], tablero[i, :], C)
+            end
+        end
+
+        base[fila_relativa] = columna_pivote
+    end
+
+    solucion_x = zeros(n)
+    for i in 1:m
+        if base[i] <= n
+            solucion_x[base[i]] = tablero[i + 1, end]
+        end
+    end
+
+    valor_optimo = -tablero[1, end]
+
+    println("Óptimo encontrado:")
+    for i in 1:n
+        println("x$i = $(solucion_x[i])")
+    end
+    println("Valor óptimo = $valor_optimo")
+
+    return valor_optimo, solucion_x
+end
+
+simplex()
