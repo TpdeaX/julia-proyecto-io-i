@@ -4,6 +4,7 @@ mutable struct ProblemaBase
     ganancia::Vector{Float64}
     coeficientes::Matrix{Float64}
     limites::Vector{Float64}
+    signos::Vector{String}
 end
 
 mutable struct Metodo_Algoritmo
@@ -13,6 +14,15 @@ end
 
 function metodo_simplex(problema::ProblemaBase, objetivo::Int)
     println("Ejecutando el método Simplex para el objetivo: $(objetivo == 1 ? "maximizar" : "minimizar")...")
+
+    println("Número de variables: ", problema.numero_variables)
+    println("Número de restricciones: ", problema.numero_restricciones)
+    println("Función objetivo: ", problema.ganancia)
+    println("Coeficientes de las restricciones: ", problema.coeficientes)
+    println("Límites de las restricciones: ", problema.limites)
+    println("Signos de las restricciones: ", problema.signos)
+
+    
     Base.run(`cmd /c pause`)
 end
 
@@ -118,10 +128,65 @@ function mostrar_menu_algoritmos(problema::ProblemaBase, opciones_resolver::Meto
     mostrar_menu_plantilla("=====MENU ALGORITMOS====", opciones_algoritmos, funciones, problema, opciones_resolver)
 end
 
+function ingresar_problema!(problema::ProblemaBase, opciones_resolver::Metodo_Algoritmo)
+    println("Ingrese el número de variables:")
+    problema.numero_variables = parse(Int, readline())
+    println("Ingrese el número de restricciones:")
+    problema.numero_restricciones = parse(Int, readline())
+
+    problema.ganancia = zeros(problema.numero_variables)
+    println("Ingrese los coeficientes de la función objetivo:")
+    
+    for i in 1:problema.numero_variables
+        print("Variable x$i: ")
+        problema.ganancia[i] = parse(Float64, readline())
+    end
+
+
+    problema.coeficientes = zeros(problema.numero_restricciones, problema.numero_variables)
+    println("Ingrese los coeficientes de las restricciones:")
+    for i in 1:problema.numero_restricciones
+        println("- Restricción $i: ")
+        for j in 1:problema.numero_variables
+            print("\t- Variable x$j: ")
+            problema.coeficientes[i, j] = parse(Float64, readline())
+        end
+
+    end
+
+    problema.limites = zeros(problema.numero_restricciones)
+    println("Ingrese los límites de las restricciones (uno por línea):")
+    for i in 1:problema.numero_restricciones
+        print("Límite $i: ")
+        problema.limites[i] = parse(Float64, readline())
+    end
+
+    problema.signos = Vector{String}(undef, problema.numero_restricciones)
+    println("Ingrese los signos de las restricciones (uno por línea, '<=', '>=', '='):")
+    for i in 1:problema.numero_restricciones
+        print("Signo $i: ")
+        problema.signos[i] = readline()
+
+        if(problema.signos[i] != "<=" && problema.signos[i] != ">=" && problema.signos[i] != "=")
+            println("Signo no válido. Por favor, ingrese '<=', '>=', o '='.")
+            #falta modidicar el indice, esta wbda es mas inutil que alguien del grupo de microcontroladores
+            i -= 1
+        end
+
+    end
+
+
+    Base.run(`cmd /c cls`)
+    println("Datos ingresados correctamente. Presione cualquier tecla para continuar...")
+    Base.run(`cmd /c pause`)
+
+
+end
+
 
 function mostrar_menu_principal()
 
-    datos_problema_principal = ProblemaBase(0, 0, zeros(0, 0), zeros(0), zeros(0))
+    datos_problema_principal = ProblemaBase(0, 0, zeros(0), zeros(0, 0), zeros(0), String[])
     opciones_algoritmos = Metodo_Algoritmo(0, 0)
 
     opciones = ["Ingresar Datos", "Resolver", "Salir"]
@@ -129,7 +194,7 @@ function mostrar_menu_principal()
         println("Saliendo del programa...")
         Base.run(`cmd /c pause`)
     end 
-    funciones = [mostrar_menu_objetivo, mostrar_menu_algoritmos, funcion_mensaje_salir]
+    funciones = [ingresar_problema!, mostrar_menu_algoritmos, funcion_mensaje_salir]
     mostrar_menu_plantilla("=====MENU PRINCIPAL====", opciones, funciones, datos_problema_principal, opciones_algoritmos)
 end
 
