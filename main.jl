@@ -45,11 +45,11 @@ function main()
     println("Ingrese los signos de las restricciones (<=, >=, =): ")
     for i in 1:problema.numero_restricciones
         print("Restricción $i: ")
-        entrada = readline()
-        if entrada == ">="
+        textoSignoRestriccion = strip(readline())
+        if textoSignoRestriccion == ">=" || textoSignoRestriccion == "="
             usar_big_m = true
         end
-        push!(problema.signos, entrada)
+        push!(problema.signos, textoSignoRestriccion)
     end
 
     print("Ingrese el objetivo (0 para maximizar, 1 para minimizar): ")
