@@ -18,7 +18,7 @@ function construir_tabla_inicial(problema::ProblemaBase)
         # Las columnas nuevas de otras restricciones deben comenzar en cero.
         columnas_anteriores = length(nombreVariable) - problema.numero_variables
         fila = vcat(vec(coeficienteRestriccionesCopia[i, :]), zeros(columnas_anteriores))
-        signo = strip(problema.signos[i])
+        signo = signos[i]
 
         if signo == 1
             # Una restricción <= obtiene una variable de holgura.
@@ -296,11 +296,7 @@ function metodo_big_m(problema::ProblemaBase, objetivo::Bool)
 
     tabla, nombreVariable, nombreTipo_Columna, variables_basicas, variables_artificiales = construir_tabla_inicial(problema)
 
-    if isempty(variables_artificiales)
-        println("No hay restricciones >= o =.")
-    else
-        println("Ejecutando el método Big-M...")
-    end
+    println("Ejecutando el método Big-M...")
 
     fila_objetivo = crear_fila_objetivo(problema, nombreVariable, nombreTipo_Columna, objetivo)
     fila_objetivo_sin_corregir = copy(fila_objetivo)
