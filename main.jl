@@ -13,14 +13,16 @@ function main()
     problema.numero_variables = parse(Int, readline())
     print("Ingrese el número de restricciones: ")
     problema.numero_restricciones = parse(Int, readline())
+
+    #se inicializa la matriz
+    problema.coeficientes_restricciones = zeros(Float64, problema.numero_restricciones, problema.numero_variables)
+
     println("Ingrese el coeficiente de las variables en la función objetivo: ")
     for i in 1:problema.numero_variables
         print("Variable x$i: ")
         push!(problema.coeficientes_objetivo, parse(Float64, readline()))
     end
 
-    #se inicializa la matriz
-    problema.coeficientes_restricciones = Matrix{Float64}(undef, 0, problema.numero_variables)
 
     println("Ingrese los coeficientes de las restricciones: ")
     for i in 1:problema.numero_restricciones
@@ -42,14 +44,14 @@ function main()
 
     usar_big_m = false
 
-    println("Ingrese los signos de las restricciones (<=, >=, =): ")
+    println("Ingrese los signos de las restricciones (1 para <=, 2 para >=, 3 para =): ")
     for i in 1:problema.numero_restricciones
         print("Restricción $i: ")
-        textoSignoRestriccion = strip(readline())
-        if textoSignoRestriccion == ">=" || textoSignoRestriccion == "="
+        numerosSigno = parse(Int, readline())
+        if numerosSigno == 2 || numerosSigno == 3
             usar_big_m = true
         end
-        push!(problema.signos, textoSignoRestriccion)
+        push!(problema.signos, numerosSigno)
     end
 
     print("Ingrese el objetivo (0 para maximizar, 1 para minimizar): ")

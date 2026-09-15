@@ -4,5 +4,5 @@ mutable struct ProblemaBase
     coeficientes_objetivo::Vector{Float64}
     coeficientes_restricciones::Matrix{Float64}
     limites_restricciones::Vector{Float64} 
-    signos::Vector{String}
+    signos::Vector{Int}
 end

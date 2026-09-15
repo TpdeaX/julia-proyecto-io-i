@@ -20,7 +20,7 @@ function construir_tabla_inicial(problema::ProblemaBase)
         fila = vcat(vec(coeficienteRestriccionesCopia[i, :]), zeros(columnas_anteriores))
         signo = strip(problema.signos[i])
 
-        if signo == "<="
+        if signo == 1
             # Una restricción <= obtiene una variable de holgura.
             nombre = "x$siguiente_variable"
             siguiente_variable += 1
@@ -33,7 +33,7 @@ function construir_tabla_inicial(problema::ProblemaBase)
             push!(fila, 1.0)
             push!(variables_basicas, nombre)
 
-        elseif signo == ">="
+        elseif signo == 2
             # Una restricción >= obtiene una variable de exceso y una artificial.
             nombre_exceso = "x$siguiente_variable"
             siguiente_variable += 1
@@ -57,7 +57,7 @@ function construir_tabla_inicial(problema::ProblemaBase)
             push!(variables_basicas, nombre_artificial)
             push!(variables_artificiales, nombre_artificial)
             
-        elseif signo == "="
+        elseif signo == 3
             # Una igualdad obtiene directamente una variable artificial.
             nombre = "x$siguiente_variable"
             siguiente_variable += 1
