@@ -18,7 +18,7 @@ function construir_tabla_inicial(problema::ProblemaBase)
         # Las columnas nuevas de otras restricciones deben comenzar en cero.
         columnas_anteriores = length(nombreVariable) - problema.numero_variables
         fila = vcat(vec(coeficienteRestriccionesCopia[i, :]), zeros(columnas_anteriores))
-        signo = signos[i]
+        signo = problema.signos[i]
 
         if signo == 1
             # Una restricción <= obtiene una variable de holgura.

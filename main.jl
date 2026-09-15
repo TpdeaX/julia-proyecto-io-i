@@ -2,7 +2,7 @@ include("estructuras.jl")
 include("simplex.jl")
 include("big_m.jl")
 
-problema = ProblemaBase(0, 0, zeros(0), zeros(0, 0), zeros(0), String[])
+problema = ProblemaBase(0, 0, zeros(0), zeros(0, 0), zeros(0), Int[])
 objetivo::Bool = 0
 
 function main()
@@ -14,8 +14,8 @@ function main()
     print("Ingrese el número de restricciones: ")
     problema.numero_restricciones = parse(Int, readline())
 
-    #se inicializa la matriz
-    problema.coeficientes_restricciones = zeros(Float64, problema.numero_restricciones, problema.numero_variables)
+    #se inicializa la matriz (0 filas, se le va agregando una por cada restricción)
+    problema.coeficientes_restricciones = zeros(Float64, 0, problema.numero_variables)
 
     println("Ingrese el coeficiente de las variables en la función objetivo: ")
     for i in 1:problema.numero_variables
