@@ -10,46 +10,46 @@ function main()
     global objetivo
 
     print("Ingrese el numero de variables: ")
-    problema.numero_variables = parse(Int, readline())
+    problema.numeroVariables = parse(Int, readline())
     print("Ingrese el numero de restricciones: ")
-    problema.numero_restricciones = parse(Int, readline())
+    problema.numeroRestricciones = parse(Int, readline())
 
-    problema.coeficientes_restricciones = zeros(Float64, 0, problema.numero_variables)
+    problema.coeficientesRestricciones = zeros(Float64, 0, problema.numeroVariables)
 
     println("Ingrese el coeficiente de las variables en la funcion objetivo: ")
-    for i in 1:problema.numero_variables
+    for i in 1:problema.numeroVariables
         print("Variable x$i: ")
-        push!(problema.coeficientes_objetivo, parse(Float64, readline()))
+        push!(problema.coeficientesObjetivo, parse(Float64, readline()))
     end
 
     println("Ingrese los coeficientes de las restricciones: ")
-    for i in 1:problema.numero_restricciones
+    for i in 1:problema.numeroRestricciones
         println("- Restriccion $i: ")
         fila = Float64[]
-        for j in 1:problema.numero_variables
+        for j in 1:problema.numeroVariables
             print("\t- Variable x$j: ")
             push!(fila, parse(Float64, readline()))
         end
 
-        problema.coeficientes_restricciones = vcat(problema.coeficientes_restricciones, fila')
+        problema.coeficientesRestricciones = vcat(problema.coeficientesRestricciones, fila')
     end
 
     println("Ingrese los limites de las restricciones: ")
-    for i in 1:problema.numero_restricciones
+    for i in 1:problema.numeroRestricciones
         print("Restriccion $i: ")
-        push!(problema.limites_restricciones, parse(Float64, readline()))
+        push!(problema.limitesRestricciones, parse(Float64, readline()))
     end
 
-    usar_big_m = false
+    usarBigM = false
 
     println("Ingrese los signos de las restricciones (1 para <=, 2 para >=, 3 para =): ")
-    for i in 1:problema.numero_restricciones
+    for i in 1:problema.numeroRestricciones
         print("Restriccion $i: ")
-        numerosSigno = parse(Int, readline())
-        if numerosSigno == 2 || numerosSigno == 3
-            usar_big_m = true
+        numeroSigno = parse(Int, readline())
+        if numeroSigno == 2 || numeroSigno == 3
+            usarBigM = true
         end
-        push!(problema.signos, numerosSigno)
+        push!(problema.signos, numeroSigno)
     end
 
     print("Ingrese el objetivo (0 para maximizar, 1 para minimizar): ")
@@ -57,10 +57,10 @@ function main()
 
     Base.run(`cmd /c cls`)
 
-    if usar_big_m
-        metodo_big_m(problema, objetivo)
+    if usarBigM
+        metodoBigM(problema, objetivo)
     else
-        metodo_simplex(problema, objetivo)
+        metodoSimplex(problema, objetivo)
     end
 end
 

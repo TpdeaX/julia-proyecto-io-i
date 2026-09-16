@@ -1,85 +1,85 @@
-function corregir_fila_objetivo!(fila_objetivo::Vector{Float64}, tabla::Matrix{Float64}, variables_basicas::Vector{String}, variables_artificiales::Vector{String})
-    valor_m = 1_000_000.0
-    total_columnas = size(tabla, 2)
+function corregirFilaObjetivo!(filaObjetivo::Vector{Float64}, tabla::Matrix{Float64}, variablesBasicas::Vector{String}, variablesArtificiales::Vector{String})
+    valorM = 1_000_000.0
+    totalColumnas = size(tabla, 2)
 
-    for (i, var_basica) in enumerate(variables_basicas)
-        if var_basica in variables_artificiales
-            for j in 1:total_columnas
-                fila_objetivo[j] += valor_m * tabla[i, j]
+    for (i, varBasica) in enumerate(variablesBasicas)
+        if varBasica in variablesArtificiales
+            for j in 1:totalColumnas
+                filaObjetivo[j] += valorM * tabla[i, j]
             end
         end
     end
 
-    return fila_objetivo
+    return filaObjetivo
 end
 
-function mostrar_cambio_fila_objetivo(fila_original::Vector{Float64}, tabla::Matrix{Float64}, variables_basicas::Vector{String}, variables_artificiales::Vector{String})
-    fila_temporal = copy(fila_original)
-    total_columnas = size(tabla, 2)
-    valor_m = 1_000_000.0
+function mostrarCambioFilaObjetivo(filaOriginal::Vector{Float64}, tabla::Matrix{Float64}, variablesBasicas::Vector{String}, variablesArtificiales::Vector{String})
+    filaTemporal = copy(filaOriginal)
+    totalColumnas = size(tabla, 2)
+    valorM = 1_000_000.0
 
     println("\nConversion de la fila objetivo:")
-    mostrar_fila("F0", fila_temporal, true)
+    mostrarFila("F0", filaTemporal, true)
 
-    for (i, var_basica) in enumerate(variables_basicas)
-        if var_basica in variables_artificiales
-            println("F0 = F0 + M * fila de ", var_basica)
-            for j in 1:total_columnas
-                fila_temporal[j] += valor_m * tabla[i, j]
+    for (i, varBasica) in enumerate(variablesBasicas)
+        if varBasica in variablesArtificiales
+            println("F0 = F0 + M * fila de ", varBasica)
+            for j in 1:totalColumnas
+                filaTemporal[j] += valorM * tabla[i, j]
             end
-            mostrar_fila("F0", fila_temporal, false)
+            mostrarFila("F0", filaTemporal, false)
         end
     end
 
-    if isempty(variables_artificiales)
+    if isempty(variablesArtificiales)
         println("No hay variables artificiales; la fila objetivo no necesita correccion.")
     end
 end
 
-function metodo_big_m(problema::ProblemaBase, objetivo::Bool)
-    tabla, nombres_variables, tipos_columnas, variables_basicas, variables_artificiales = construir_tabla_inicial(problema)
-    fila_objetivo = crear_fila_objetivo(problema, nombres_variables, tipos_columnas, objetivo)
-    fila_objetivo_sin_corregir = copy(fila_objetivo)
-    numero_iteracion = 1
+function metodoBigM(problema::ProblemaBase, objetivo::Bool)
+    tabla, nombresVariables, tiposColumnas, variablesBasicas, variablesArtificiales = construirTablaInicial(problema)
+    filaObjetivo = crearFilaObjetivo(problema, nombresVariables, tiposColumnas, objetivo)
+    filaObjetivoSinCorregir = copy(filaObjetivo)
+    numeroIteracion = 1
 
     println("Ejecutando el metodo Big-M...")
-    corregir_fila_objetivo!(fila_objetivo, tabla, variables_basicas, variables_artificiales)
+    corregirFilaObjetivo!(filaObjetivo, tabla, variablesBasicas, variablesArtificiales)
 
     println("Objetivo: ", objetivo ? "minimizar" : "maximizar")
     println("\nInicializacion de la iteracion:")
-    mostrar_bi_ni(nombres_variables, variables_basicas)
+    mostrarBiNi(nombresVariables, variablesBasicas)
     
     println("Fila objetivo inicial, antes de corregir las artificiales:")
-    mostrar_tabla_inicial(tabla, nombres_variables, variables_basicas, fila_objetivo_sin_corregir, true)
+    mostrarTablaInicial(tabla, nombresVariables, variablesBasicas, filaObjetivoSinCorregir, true)
     
-    mostrar_cambio_fila_objetivo(fila_objetivo_sin_corregir, tabla, variables_basicas, variables_artificiales)
+    mostrarCambioFilaObjetivo(filaObjetivoSinCorregir, tabla, variablesBasicas, variablesArtificiales)
         
     println("\nMatriz inicial despues de corregir la fila objetivo:")
-    mostrar_tabla_inicial(tabla, nombres_variables, variables_basicas, fila_objetivo, false)
+    mostrarTablaInicial(tabla, nombresVariables, variablesBasicas, filaObjetivo, false)
 
     while true
-        hubo_pivote = hacer_una_iteracion!(tabla, fila_objetivo, nombres_variables, variables_basicas)
-        if !hubo_pivote
+        huboPivote = hacerUnaIteracion!(tabla, filaObjetivo, nombresVariables, variablesBasicas)
+        if !huboPivote
             break
         end
 
-        println("\nIteracion ", numero_iteracion)
-        mostrar_bi_ni(nombres_variables, variables_basicas)
+        println("\nIteracion ", numeroIteracion)
+        mostrarBiNi(nombresVariables, variablesBasicas)
         println("Tabla despues del pivote:")
-        mostrar_tabla_inicial(tabla, nombres_variables, variables_basicas, fila_objetivo, false)
-        numero_iteracion += 1
+        mostrarTablaInicial(tabla, nombresVariables, variablesBasicas, filaObjetivo, false)
+        numeroIteracion += 1
     end
 
-    solucion = obtener_solucion(tabla, variables_basicas, problema.numero_variables)
+    solucion = obtenerSolucion(tabla, variablesBasicas, problema.numeroVariables)
     println("\nSolucion encontrada:")
-    for i in 1:problema.numero_variables
+    for i in 1:problema.numeroVariables
         println("x$i = ", solucion[i])
     end
-    println("Variables basicas finales: ", variables_basicas)
-    println("Variables artificiales: ", variables_artificiales)
+    println("Variables basicas finales: ", variablesBasicas)
+    println("Variables artificiales: ", variablesArtificiales)
     
-    valor_objetivo = objetivo ? fila_objetivo[end] : -fila_objetivo[end]
-    println("Valor de la funcion objetivo: ", valor_objetivo)
+    valorObjetivo = objetivo ? filaObjetivo[end] : -filaObjetivo[end]
+    println("Valor de la funcion objetivo: ", valorObjetivo)
 
-    return tabla, fila_objetivo, nombres_variables, tipos_columnas, variables_basicas, variables_artificiales, solucion
+    return tabla, filaObjetivo, nombresVariables, tiposColumnas, variablesBasicas, variablesArtificiales, solucion
 end
