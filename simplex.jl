@@ -1,5 +1,4 @@
-
-function contar_variables_adicionales(signos::Vector{Int})
+﻿function contar_variables_adicionales(signos::Vector{Int})
     total = 0
     for signo in signos
         if signo == 1   
@@ -80,7 +79,6 @@ function construir_tabla_inicial(problema::ProblemaBase)
     return tabla, nombres_variables, tipos_columnas, variables_basicas, variables_artificiales
 end
 
-
 function mostrar_numero(numero::Float64, mostrar_m::Bool)
     if mostrar_m && numero == -1_000_000.0
         return "-M"
@@ -91,7 +89,6 @@ function mostrar_numero(numero::Float64, mostrar_m::Bool)
     end
 end
 
-
 function mostrar_fila(nombre::String, valores, mostrar_m::Bool)
     texto = rpad(nombre, 6)
     for valor in valores
@@ -99,7 +96,6 @@ function mostrar_fila(nombre::String, valores, mostrar_m::Bool)
     end
     println(texto)
 end
-
 
 function mostrar_tabla_inicial(tabla::Matrix{Float64}, nombres_variables::Vector{String}, variables_basicas::Vector{String}, fila_objetivo::Vector{Float64}, mostrar_m::Bool)
     encabezado = rpad("Base", 6)
@@ -119,7 +115,6 @@ function mostrar_tabla_inicial(tabla::Matrix{Float64}, nombres_variables::Vector
     end
 end
 
-
 function mostrar_bi_ni(nombres_variables::Vector{String}, variables_basicas::Vector{String})
     no_basicas = String[]
 
@@ -132,7 +127,6 @@ function mostrar_bi_ni(nombres_variables::Vector{String}, variables_basicas::Vec
     println("BI (variables basicas): ", variables_basicas)
     println("NI (variables no basicas): ", no_basicas)
 end
-
 
 function crear_fila_objetivo(problema::ProblemaBase, nombres_variables::Vector{String}, tipos_columnas::Vector{String}, objetivo::Bool)
     signo_objetivo = objetivo ? -1.0 : 1.0
@@ -152,7 +146,6 @@ function crear_fila_objetivo(problema::ProblemaBase, nombres_variables::Vector{S
     return fila_objetivo
 end
 
-
 function buscar_columna_pivote(fila_objetivo::Vector{Float64})
     posicion = 0
     mayor = 0.0
@@ -169,7 +162,6 @@ function buscar_columna_pivote(fila_objetivo::Vector{Float64})
 
     return posicion
 end
-
 
 function buscar_fila_pivote(tabla::Matrix{Float64}, columna_pivote::Int)
     posicion = 0
@@ -188,7 +180,6 @@ function buscar_fila_pivote(tabla::Matrix{Float64}, columna_pivote::Int)
 
     return posicion
 end
-
 
 function hacer_pivote!(tabla::Matrix{Float64}, fila_objetivo::Vector{Float64}, fila_pivote::Int, columna_pivote::Int)
     total_filas = size(tabla, 1)
@@ -218,7 +209,6 @@ function hacer_pivote!(tabla::Matrix{Float64}, fila_objetivo::Vector{Float64}, f
     end
 end
 
-
 function hacer_una_iteracion!(tabla::Matrix{Float64}, fila_objetivo::Vector{Float64}, nombres_variables::Vector{String}, variables_basicas::Vector{String})
     columna_pivote = buscar_columna_pivote(fila_objetivo)
 
@@ -238,7 +228,6 @@ function hacer_una_iteracion!(tabla::Matrix{Float64}, fila_objetivo::Vector{Floa
     return true
 end
 
-
 function obtener_solucion(tabla::Matrix{Float64}, variables_basicas::Vector{String}, numero_variables::Int)
     solucion = zeros(Float64, numero_variables)
 
@@ -251,7 +240,6 @@ function obtener_solucion(tabla::Matrix{Float64}, variables_basicas::Vector{Stri
 
     return solucion
 end
-
 
 function metodo_simplex(problema::ProblemaBase, objetivo::Bool)
     println("Ejecutando el metodo Simplex...")

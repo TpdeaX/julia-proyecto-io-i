@@ -1,4 +1,3 @@
-
 function corregir_fila_objetivo!(fila_objetivo::Vector{Float64}, tabla::Matrix{Float64}, variables_basicas::Vector{String}, variables_artificiales::Vector{String})
     valor_m = 1_000_000.0
     total_columnas = size(tabla, 2)
@@ -13,7 +12,6 @@ function corregir_fila_objetivo!(fila_objetivo::Vector{Float64}, tabla::Matrix{F
 
     return fila_objetivo
 end
-
 
 function mostrar_cambio_fila_objetivo(fila_original::Vector{Float64}, tabla::Matrix{Float64}, variables_basicas::Vector{String}, variables_artificiales::Vector{String})
     fila_temporal = copy(fila_original)
@@ -37,7 +35,6 @@ function mostrar_cambio_fila_objetivo(fila_original::Vector{Float64}, tabla::Mat
         println("No hay variables artificiales; la fila objetivo no necesita correccion.")
     end
 end
-
 
 function metodo_big_m(problema::ProblemaBase, objetivo::Bool)
     tabla, nombres_variables, tipos_columnas, variables_basicas, variables_artificiales = construir_tabla_inicial(problema)

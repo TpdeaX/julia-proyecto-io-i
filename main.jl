@@ -2,8 +2,8 @@ include("estructuras.jl")
 include("simplex.jl")
 include("big_m.jl")
 
-problema = ProblemaBase(0, 0, zeros(0), zeros(0, 0), zeros(0), Int[])
-objetivo::Bool = 0
+problema = ProblemaBase(0, 0, zeros(0), zeros(0, 0), zeros(0), zeros(Int, 0))
+objetivo::Bool = false
 
 function main()
     global problema
@@ -21,7 +21,6 @@ function main()
         print("Variable x$i: ")
         push!(problema.coeficientes_objetivo, parse(Float64, readline()))
     end
-
 
     println("Ingrese los coeficientes de las restricciones: ")
     for i in 1:problema.numero_restricciones
@@ -63,7 +62,6 @@ function main()
     else
         metodo_simplex(problema, objetivo)
     end
-
 end
 
 main()
