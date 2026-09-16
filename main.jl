@@ -9,15 +9,14 @@ function main()
     global problema
     global objetivo
 
-    print("Ingrese el número de variables: ")
+    print("Ingrese el numero de variables: ")
     problema.numero_variables = parse(Int, readline())
-    print("Ingrese el número de restricciones: ")
+    print("Ingrese el numero de restricciones: ")
     problema.numero_restricciones = parse(Int, readline())
 
-    #se inicializa la matriz (0 filas, se le va agregando una por cada restricción)
     problema.coeficientes_restricciones = zeros(Float64, 0, problema.numero_variables)
 
-    println("Ingrese el coeficiente de las variables en la función objetivo: ")
+    println("Ingrese el coeficiente de las variables en la funcion objetivo: ")
     for i in 1:problema.numero_variables
         print("Variable x$i: ")
         push!(problema.coeficientes_objetivo, parse(Float64, readline()))
@@ -26,7 +25,7 @@ function main()
 
     println("Ingrese los coeficientes de las restricciones: ")
     for i in 1:problema.numero_restricciones
-        println("- Restricción $i: ")
+        println("- Restriccion $i: ")
         fila = Float64[]
         for j in 1:problema.numero_variables
             print("\t- Variable x$j: ")
@@ -36,9 +35,9 @@ function main()
         problema.coeficientes_restricciones = vcat(problema.coeficientes_restricciones, fila')
     end
 
-    println("Ingrese los límites de las restricciones: ")
+    println("Ingrese los limites de las restricciones: ")
     for i in 1:problema.numero_restricciones
-        print("Restricción $i: ")
+        print("Restriccion $i: ")
         push!(problema.limites_restricciones, parse(Float64, readline()))
     end
 
@@ -46,7 +45,7 @@ function main()
 
     println("Ingrese los signos de las restricciones (1 para <=, 2 para >=, 3 para =): ")
     for i in 1:problema.numero_restricciones
-        print("Restricción $i: ")
+        print("Restriccion $i: ")
         numerosSigno = parse(Int, readline())
         if numerosSigno == 2 || numerosSigno == 3
             usar_big_m = true
